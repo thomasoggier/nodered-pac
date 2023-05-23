@@ -38,16 +38,19 @@ module.exports = function(RED) {
 
     // A node red node that sets up a local websocket server
     function WebSocketListenerNode(n) {
+        console.log("WebSocketListenerNode");
         // Create a RED node
+    
         RED.nodes.createNode(this, n);
+        console.log("0");
         
-        RED.nodes.createNode()
         var node = this;
 
         // Store local copies of the node configuration (as defined in the .html)
         
         //node.path = n.path;
         
+        console.log("1");
 // Fake
         node.subprotocol = "Lux_WS";
         node.path = "ws://192.168.1.40:8214";
@@ -60,6 +63,7 @@ module.exports = function(RED) {
         }
         
 
+        console.log("2");
 
 
         node.wholemsg = (n.wholemsg === "true");
@@ -71,6 +75,7 @@ module.exports = function(RED) {
         node.closing = false;
         node.tls = n.tls;
 
+        console.log("3");
         if (n.hb) {
             var heartbeat = parseInt(n.hb);
             if (heartbeat > 0) {
@@ -78,6 +83,7 @@ module.exports = function(RED) {
             }
         }
 
+        console.log("4");
         function startconn() {    // Connect to remote endpoint
             node.tout = null;
             var prox, noprox;
@@ -114,6 +120,7 @@ module.exports = function(RED) {
             handleConnection(socket);
         }
 
+        console.log("5");
         function handleConnection(/*socket*/socket) {
             var id = RED.util.generateId();
             socket.nrId = id;
@@ -175,6 +182,7 @@ module.exports = function(RED) {
             })
         }
 
+        console.log("6");
         if (node.isServer) {
             if (!serverUpgradeAdded) {
                 RED.server.on('upgrade', handleServerUpgrade);
@@ -218,6 +226,7 @@ module.exports = function(RED) {
             node.closing = false;
             startconn(); // start outbound connection
         }
+        console.log("7");
 
         node.on("close", function(done) {
             if (node.heartbeatInterval) {
@@ -254,10 +263,12 @@ module.exports = function(RED) {
     RED.nodes.registerType("websocket-client-pac",WebSocketListenerNode);
 
     WebSocketListenerNode.prototype.registerInputNode = function (/*Node*/handler) {
+        console.log("registerInputNode");
         this._inputNodes.push(handler);
     }
 
     WebSocketListenerNode.prototype.removeInputNode = function(/*Node*/handler) {
+        console.log("removeInputNode");
         this._inputNodes.forEach(function(node, i, inputNodes) {
             if (node === handler) {
                 inputNodes.splice(i, 1);
@@ -266,6 +277,7 @@ module.exports = function(RED) {
     }
 
     WebSocketListenerNode.prototype.handleEvent = function(id,/*socket*/socket,/*String*/event,/*Object*/data,/*Object*/flags) {
+        console.log("handleEvent");
         var msg;
         if (this.wholemsg) {
             try {
@@ -289,6 +301,7 @@ module.exports = function(RED) {
     }
 
     WebSocketListenerNode.prototype.broadcast = function(data) {
+        console.log("broadcast");
         if (this.isServer) {
             for (let client in this._clients) {
                 if (this._clients.hasOwnProperty(client)) {
@@ -310,6 +323,7 @@ module.exports = function(RED) {
     }
 
     WebSocketListenerNode.prototype.reply = function(id,data) {
+        console.log("reply");
         var session = this._clients[id];
         if (session) {
             try {
@@ -321,6 +335,7 @@ module.exports = function(RED) {
     }
 
     function WebSocketInNode(n) {
+        console.log("WebSocketInNode");
         RED.nodes.createNode(this,n);
         this.server = (n.client)?n.client:n.server;
         var node = this;
@@ -366,6 +381,7 @@ module.exports = function(RED) {
     RED.nodes.registerType("websocket in custom",WebSocketInNode);
 
     function WebSocketOutNode(n) {
+        console.log("WebSocketOutNode");
         RED.nodes.createNode(this,n);
         var node = this;
         this.server = (n.client)?n.client:n.server;
