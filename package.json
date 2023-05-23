@@ -1,0 +1,14 @@
+{
+  "name": "nodered-pac-test",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {},
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "node-red" : {
+     "nodes": {
+        "test-ws": "test/test-ws.js"
+      }
+   }
+}
