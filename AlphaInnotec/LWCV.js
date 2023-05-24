@@ -115,6 +115,15 @@ module.exports = function (RED) {
                     if (Array.isArray(item))
                         item.forEach(function (element) { 
                             sendResultValue(groupName, element['name'], element['value']);
+                            if (groupName == "Mode de fonctionnement") {
+                                console.log(element['name']);
+                                if (element['name'] == "Eau Chaude Sanitaire") {
+                                    node.ecsId = element['@_id'];
+                                }
+                                if (element['name'] == "Circuit chauffage") {
+                                    node.heatingId = element['@_id'];
+                                }
+                            }
                         })
                     else
                         sendResultValue(groupName, item['name'], item['value']);                    
@@ -150,18 +159,44 @@ module.exports = function (RED) {
             console.log(group + ": " + name + " -> " + valueWithUnits[0] +"["+valueWithUnits[1]+"]");
             node.send(msg);
         }
+
+
+
+
+        function stringModeToInt(modeName)
+        {
+            console.log("stringModeToInt: "+modeName);
+            switch (modeName) {
+                case "auto":
+                    return 0;
+                case "appoint":
+                    return 1;
+                case "party":
+                    return 2;
+                case "holiday":
+                    return 3;
+                case "off":
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
  // node.on msg
-        node.on('input', function(msg, send, done) {
-            switch (msg.payload.function) { 
+        node.on('input', function (msg, send, done) {
+            console.log(msg);
+            switch (msg.payload.function) {
                 case "refresh":
+                    console.log("refresh");
                     node.socket.once('message', handlerInformationsRequest);
-                    node.socket.send("GET;"+node.informationsId);
+                    node.socket.send("GET;" + node.informationsId);
                     break;
                 case "ecs":
-                    node.socket.send("SET;set_"+node.ecsId+msg.mode);
+                    node.socket.send("SET;set_" + node.ecsId +";"+ stringModeToInt(msg.payload.mode));
+                    node.socket.send("SAVE;1");
                     break;
                 case "heating":
-                    node.socket.send("SET;set_"+node.heatingId+msg.mode);
+                    node.socket.send("SET;set_"+node.heatingId+";"+stringModeToInt(msg.payload.mode));
+                    node.socket.send("SAVE;1");
                     break;
             }
             done();
