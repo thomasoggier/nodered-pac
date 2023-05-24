@@ -1,0 +1,27 @@
+<script type="text/javascript">
+    RED.nodes.registerType('LWCV', {
+        category: 'AlphaInnotec',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "PAC" },
+            url: {value: "ws://192.168.1.40:8124"}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.png",
+        label: function () {
+            return this.name || "LWCV";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="AlphaInnotec_LWCV">
+    <div class="form-row">
+        <label for="node-input-name"> <i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-url"> <i class="fa fa-tag"></i> url</label>
+        <input type="text" id="node-input-url" placeholder="/url">
+    </div>
+</script>
